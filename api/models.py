@@ -8,11 +8,7 @@ class Localite(models.Model):
     longitude = models.FloatField()
 
 class Profil(models.Model):
-    libelle = models.CharField(
-        max_length=50,
-        choices=[('ADMIN', 'Admin'), ('SUPERVISEUR', 'Superviseur'), ('CLIENT', 'Client')],
-        unique=True
-    )
+    libelle = models.CharField(max_length=50, unique=True)
 
 class Utilisateur(models.Model):
     prenom = models.CharField(max_length=100)

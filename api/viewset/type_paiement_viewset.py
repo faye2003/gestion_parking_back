@@ -2,15 +2,15 @@ from rest_framework import viewsets, status, filters
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
-from api.serializers.type_account_serializer import TypeAccountSerializer
+from api.serializers.type_paiement_serializer import TypePaiementSerializer
 from api.pagination import CustomPagination
 
-from api.models import TypeAccount
+from api.models import TypePaiement
 
 
-class TypeAccountViewSet(viewsets.ModelViewSet):
-    queryset = TypeAccount.objects.all()
-    serializer_class = TypeAccountSerializer
+class TypePaiementViewSet(viewsets.ModelViewSet):
+    queryset = TypePaiement.objects.all()
+    serializer_class = TypePaiementSerializer
     pagination_class = CustomPagination
     filter_backends = [filters.SearchFilter]
     search_fields = ['libelle']
@@ -42,7 +42,7 @@ class TypeAccountViewSet(viewsets.ModelViewSet):
             self.perform_create(serializer)
             return Response({
                 'status': True,
-                'message': 'Type de compte créé avec succès',
+                'message': 'Type de paiement créé avec succès',
                 'data': serializer.data
             }, status=status.HTTP_201_CREATED)
         return Response({
@@ -59,7 +59,7 @@ class TypeAccountViewSet(viewsets.ModelViewSet):
             self.perform_update(serializer)
             return Response({
                 'status': True,
-                'message': 'Type de compte mis à jour avec succès',
+                'message': 'Type de paiement mis à jour avec succès',
                 'data': serializer.data
             }, status=status.HTTP_200_OK)
         return Response({
@@ -74,7 +74,7 @@ class TypeAccountViewSet(viewsets.ModelViewSet):
         self.perform_destroy(instance)
         return Response({
             'status': True,
-            'message': 'Type de compte supprimé avec succès'
+            'message': 'Type de paiement supprimé avec succès'
         }, status=status.HTTP_200_OK)
 
 

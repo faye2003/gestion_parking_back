@@ -23,11 +23,12 @@ class Utilisateur(models.Model):
 class Parking(models.Model):
     libelle = models.CharField(max_length=100)
     description = models.CharField(max_length=255)
-    total_places = models.PositiveIntegerField()
+    # total_places = models.PositiveIntegerField()
     statut = models.BooleanField(default=True)
     date_creation = models.DateTimeField(auto_now_add=True)
     date_modification = models.DateTimeField(auto_now=True)
     localite = models.ForeignKey(Localite, on_delete=models.SET_NULL, null=True)
+    
 
 class Camera(models.Model):
     nom = models.CharField(max_length=100)
@@ -56,7 +57,7 @@ class Place(models.Model):
         choices=[('LIBRE', 'Libre'), ('OCCUPEE', 'Occupée')],
         default='LIBRE'
     )
-    parking = models.ForeignKey(Parking, on_delete=models.CASCADE)
+    parking = models.ForeignKey(Parking, on_delete=models.CASCADE, related_name='places')
     vehicule = models.ForeignKey(Vehicule, on_delete=models.SET_NULL, null=True, blank=True)
 
 class TypeAccount(models.Model):

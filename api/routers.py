@@ -5,6 +5,7 @@ from api.urls.type_paiement_urls import urlpatterns as type_paiement_urls
 from api.urls.localite_urls import urlpatterns as localite_urls
 from api.urls.profil_urls import urlpatterns as profil_urls
 from api.urls.parking_urls import urlpatterns as parking_urls
+from api.urls.place_urls import urlpatterns as place_urls
 
 urlpatterns = [
     path('api/', include(utilisateur_urls)),
@@ -13,4 +14,5 @@ urlpatterns = [
     path('api/', include(localite_urls)),
     path('api/', include(profil_urls)),
     path('api/', include(parking_urls)),
+    path('api/', include(place_urls)),
 ]

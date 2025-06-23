@@ -1,8 +1,9 @@
 from rest_framework import serializers
 from api.models import Parking
+from api.serializers.localite_serializer import LocaliteSerializer
 
 class ParkingSerializer(serializers.ModelSerializer):
-    localite = serializers.CharField(source='localite.libelle', read_only=True)
+    localite = LocaliteSerializer(read_only=True) 
     total_places = serializers.SerializerMethodField()
     places_libres = serializers.SerializerMethodField()
     places_occupees = serializers.SerializerMethodField()

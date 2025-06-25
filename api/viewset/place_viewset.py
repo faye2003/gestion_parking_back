@@ -13,7 +13,7 @@ class PlaceViewSet(viewsets.ModelViewSet):
     serializer_class = PlaceSerializer
     pagination_class = CustomPagination
     filter_backends = [filters.SearchFilter]
-    search_fields = ['libelle']
+    search_fields = ['numero']
 
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
@@ -77,4 +77,26 @@ class PlaceViewSet(viewsets.ModelViewSet):
             'message': 'Type de compte supprimé avec succès'
         }, status=status.HTTP_200_OK)
 
+    @action(detail=True, methods=['post'])
+    def entree(self, request, pk=None):
+        place = self.get_object()
+        if place.statut == 'OCCUPEE':
+            return Response({'error': 'La place est déjà occupée'}, status=400)
+        place.vehicule_id = request.data.get('vehicule_id')
+        place.heure_entree = now()
+        place.heure_sortie = None
+        place.statut = 'OCCUPEE'
+        place.save()
+        return Response({'status': 'Entrée enregistrée'})
+    
+    @action(detail=True, methods=['post'])
+    def sortie(self, request, pk=None):
+        place = self.get_object()
+        if place.statut == 'LIBRE':
+            return Response({'error': 'La place est déjà libre'}, status=400)
+        place.heure_sortie = now()
+        place.vehicule = None
+        place.statut = 'LIBRE'
+        place.save()
+        return Response({'status': 'Sortie enregistrée'})
 

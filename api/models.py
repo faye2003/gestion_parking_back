@@ -1,5 +1,6 @@
 from django.db import models
 
+from django.utils import timezone
 # Create your models here.
 
 class Localite(models.Model):
@@ -43,22 +44,56 @@ class Detection(models.Model):
     parking = models.ForeignKey(Parking, on_delete=models.CASCADE)
 
 class Vehicule(models.Model):
-    marque = models.CharField(max_length=100)
     immatricule = models.CharField(max_length=50, unique=True)
-    couleur = models.CharField(max_length=50)
-    parking = models.ForeignKey(Parking, on_delete=models.SET_NULL, null=True)
-    user = models.ForeignKey(Utilisateur, on_delete=models.CASCADE)
+    marque = models.CharField(max_length=100, null=True, blank=True)
+    couleur = models.CharField(max_length=50, null=True, blank=True)
+    user = models.ForeignKey(Utilisateur, on_delete=models.SET_NULL, null=True, blank=True)
+
+    def __str__(self):
+        return self.immatricule
 
 class Place(models.Model):
+    parking = models.ForeignKey(Parking, on_delete=models.CASCADE, related_name='places')
+    vehicule = models.ForeignKey('Vehicule', on_delete=models.SET_NULL, null=True, blank=True)
     heure_entree = models.DateTimeField(null=True, blank=True)
     heure_sortie = models.DateTimeField(null=True, blank=True)
-    statut = models.CharField(
-        max_length=10,
-        choices=[('LIBRE', 'Libre'), ('OCCUPEE', 'Occupée')],
-        default='LIBRE'
-    )
-    parking = models.ForeignKey(Parking, on_delete=models.CASCADE, related_name='places')
-    vehicule = models.ForeignKey(Vehicule, on_delete=models.SET_NULL, null=True, blank=True)
+
+    STATUT_CHOICES = [
+        ('LIBRE', 'Libre'),
+        ('OCCUPEE', 'Occupée'),
+    ]
+    statut = models.CharField(max_length=10, choices=STATUT_CHOICES, default='LIBRE')
+
+    def __str__(self):
+        return f"Place {self.id} - {self.statut}"
+
+    @property
+    def duree_stationnement(self):
+        if self.heure_entree and self.heure_sortie:
+            return self.heure_sortie - self.heure_entree
+        return None
+
+    def occuper(self, vehicule):
+        """Méthode pour occuper une place"""
+        self.vehicule = vehicule
+        self.heure_entree = timezone.now()
+        self.statut = 'OCCUPEE'
+        self.save()
+
+    def liberer(self):
+        """Méthode pour libérer une place"""
+        self.heure_sortie = timezone.now()
+        self.statut = 'LIBRE'
+        self.vehicule = None
+        self.save()
+
+class MouvementPlace(models.Model):
+    vehicule = models.ForeignKey(Vehicule, on_delete=models.CASCADE)
+    place = models.ForeignKey(Place, on_delete=models.CASCADE)
+    date_entree = models.DateTimeField()
+    date_sortie = models.DateTimeField(null=True, blank=True)
+
+
 
 class TypeAccount(models.Model):
     libelle = models.CharField(max_length=100)

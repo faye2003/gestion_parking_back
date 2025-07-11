@@ -48,7 +48,7 @@ class Vehicule(models.Model):
     immatricule = models.CharField(max_length=50, unique=True)
     couleur = models.CharField(max_length=50)
     parking = models.ForeignKey(Parking, on_delete=models.SET_NULL, null=True)
-    user = models.ForeignKey(Utilisateur, on_delete=models.CASCADE)
+    user = models.ForeignKey(Utilisateur, on_delete=models.CASCADE, null=True)
 
 class Place(models.Model):
     heure_entree = models.DateTimeField(null=True, blank=True)

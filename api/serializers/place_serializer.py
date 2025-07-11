@@ -5,3 +5,11 @@ class PlaceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Place
         fields = '__all__'
+
+    def to_representation(self, instance):
+        rep = super().to_representation(instance)
+        rep['parking'] = {
+            'id': instance.parking.id,
+            'libelle': instance.parking.libelle
+        }
+        return rep

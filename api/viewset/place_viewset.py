@@ -42,7 +42,7 @@ class PlaceViewSet(viewsets.ModelViewSet):
             self.perform_create(serializer)
             return Response({
                 'status': True,
-                'message': 'Type de compte créé avec succès',
+                'message': 'Place créé avec succès',
                 'data': serializer.data
             }, status=status.HTTP_201_CREATED)
         return Response({
@@ -59,7 +59,7 @@ class PlaceViewSet(viewsets.ModelViewSet):
             self.perform_update(serializer)
             return Response({
                 'status': True,
-                'message': 'Type de compte mis à jour avec succès',
+                'message': 'Place mis à jour avec succès',
                 'data': serializer.data
             }, status=status.HTTP_200_OK)
         return Response({
@@ -81,22 +81,31 @@ class PlaceViewSet(viewsets.ModelViewSet):
     def entree(self, request, pk=None):
         place = self.get_object()
         if place.statut == 'OCCUPEE':
-            return Response({'error': 'La place est déjà occupée'}, status=400)
-        place.vehicule_id = request.data.get('vehicule_id')
-        place.heure_entree = now()
-        place.heure_sortie = None
-        place.statut = 'OCCUPEE'
-        place.save()
-        return Response({'status': 'Entrée enregistrée'})
+            return Response({'status': False, 'message': 'La place est déjà occupée'}, status=400)
+
+        vehicule_id = request.data.get('vehicule_id')
+        if not vehicule_id:
+            return Response({'status': False, 'message': 'ID du véhicule requis'}, status=400)
+
+        try:
+            vehicule = Vehicule.objects.get(id=vehicule_id)
+        except Vehicule.DoesNotExist:
+            return Response({'status': False, 'message': 'Véhicule introuvable'}, status=404)
+        
+        if Place.objects.filter(vehicule=vehicule, statut='OCCUPEE').exists():
+            return Response({'status': False, 'message': 'Ce véhicule est déjà sur une place occupée'}, status=400)
+
+        place.occuper(vehicule)
+        return Response({'status': True, 'message': 'Entrée enregistrée'})
+
     
     @action(detail=True, methods=['post'])
     def sortie(self, request, pk=None):
         place = self.get_object()
         if place.statut == 'LIBRE':
-            return Response({'error': 'La place est déjà libre'}, status=400)
-        place.heure_sortie = now()
-        place.vehicule = None
-        place.statut = 'LIBRE'
-        place.save()
-        return Response({'status': 'Sortie enregistrée'})
+            return Response({'status': False, 'message': 'La place est déjà libre'}, status=400)
+
+        place.liberer()
+        return Response({'status': True, 'message': 'Sortie enregistrée'})
+
 

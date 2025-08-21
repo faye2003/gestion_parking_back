@@ -25,7 +25,7 @@ while cap.isOpened():
 
             if result:
                 plaque_text = result[0][1]
-                print("🚗 Plaque détectée :", plaque_text)
+                print("Plaque détectée :", plaque_text)
 
                 try:
                     # 1. Créer ou ignorer le véhicule (optionnel selon ton besoin réel)
@@ -37,24 +37,24 @@ while cap.isOpened():
                         "user": 1                     # idem : un user dummy ou auto-détecté
                     }
                     r1 = requests.post("http://localhost:8000/api/vehicule/", json=payload_vehicule)
-                    print("✅ Véhicule :", r1.json())
+                    print("Véhicule :", r1.json())
 
                     # 2. Déclencher entrée ou sortie
                     r2 = requests.post(
                         "http://localhost:8000/api/detecter-entree-sortie/",
                         json={"immatricule": plaque_text}
                     )
-                    print("✅ Entrée/Sortie :", r2.json())
+                    print("Entrée/Sortie :", r2.json())
 
                 except Exception as e:
-                    print("❌ Erreur API :", e)
+                    print("Erreur API :", e)
 
     try:
         cv2.imshow("Détection", frame)
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
     except cv2.error as e:
-        print("⚠️ Affichage désactivé (imshow non supporté)")
+        print("Affichage désactivé (imshow non supporté)")
 
 cap.release()
 cv2.destroyAllWindows()

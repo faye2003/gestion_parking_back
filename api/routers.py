@@ -8,6 +8,7 @@ from api.urls.parking_urls import urlpatterns as parking_urls
 from api.urls.place_urls import urlpatterns as place_urls
 from api.urls.vehicule_urls import urlpatterns as vehicule_urls
 from api.urls.paiement_urls import urlpatterns as paiement_urls
+from api.urls.dashboard_urls import urlpatterns as dashboard_urls
 from api.urls.contact_urls import urlpatterns as contact_urls
 from api.urls.views_urls import urlpatterns as views_urls
 
@@ -21,6 +22,7 @@ urlpatterns = [
     path('api/', include(place_urls)),
     path('api/', include(vehicule_urls)),
     path('api/', include(paiement_urls)),
+    path('api/', include(dashboard_urls)),
     path('api/', include(contact_urls)),
     path('api/', include(views_urls)),
 ]
